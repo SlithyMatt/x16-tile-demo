@@ -7,15 +7,11 @@ void main(int argc, char **argv) {
    FILE *ofp;
 
    int address;
-   uint8_t *idata;
    int iwidth;
    int owidth;
-   int factor;
-   long jump;
-   long rewind;
-   long next;
-   int row;
-   int offset;
+   uint8_t idata[640*480];
+   int iheight;
+   int x,y;
 
    if (argc < 5) {
       printf("Usage: %s [input bitmap] [input width] [output bitmap] [output width]\n", argv[0]);
@@ -48,26 +44,25 @@ void main(int argc, char **argv) {
       return;
    }
 
-   factor = iwidth / owidth;
-   jump = (long)(owidth * (owidth - 1));
-   rewind = -1L * (long)factor * ((long)owidth + jump) + (long)owidth;
-   next = -1L * rewind - jump;
-
-   idata = malloc(iwidth);
-
+   x = 0;
+   y = 0;
    while (!feof(ifp)) {
-      for (row = 0; row < owidth; row++) {
-         if (fread(idata,1,iwidth,ifp) > 0) {
-            for (int offset = 0; offset < iwidth; offset += owidth) {
-               fwrite(&idata[offset],1,owidth,ofp);
-               fseek(ofp,jump,SEEK_CUR);
-            }
-            fseek(ofp,rewind,SEEK_CUR);
-         }
+      fread(&idata[x+y*iwidth],1,owidth,ifp);
+      x += owidth;
+      if (x == iwidth) {
+         x = 0;
+         y++;
       }
-      fseek(ofp,next,SEEK_CUR);
+   }
+   fclose(ifp);
+
+   iheight = y;
+
+   for (x = 0; x < iwidth; x += owidth) {
+      for (y = 0; y < iheight; y++) {
+         fwrite(&idata[x+y*iwidth],1,owidth,ofp);
+      }
    }
 
-   fclose(ifp);
    fclose(ofp);
 }
