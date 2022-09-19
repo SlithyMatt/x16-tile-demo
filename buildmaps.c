@@ -12,6 +12,7 @@ void buildmap(int orig_width, int orig_height, int twidth, int theight) {
    uint8_t odata[2];
    int i,j;
    int tile_index;
+   int all_cols, all_rows;
    
    sprintf(ofn,"MAP%02d%02d.BIN",twidth,theight);
    ofp = fopen(ofn,"wb");
@@ -23,9 +24,11 @@ void buildmap(int orig_width, int orig_height, int twidth, int theight) {
    num_cols = orig_width / twidth;
    start_row = (480 - orig_height) / (theight*2);
    num_rows = orig_height / theight;
+   all_cols = (twidth == 8) ? 128 : 64;
+   all_rows = (theight == 8) ? 64 : 32;
 
    for (i = 0; i < start_row; i++) {
-      for (j = 0; j < 640/twidth; j++) {
+      for (j = 0; j < all_cols; j++) {
          fwrite(odata,1,2,ofp);
       }
    }
@@ -43,13 +46,13 @@ void buildmap(int orig_width, int orig_height, int twidth, int theight) {
       }
       odata[0] = 0;
       odata[1] = 0;
-      for (j = start_col+num_cols; j < 640/twidth; j++) {
+      for (j = start_col+num_cols; j < all_cols; j++) {
          fwrite(odata,1,2,ofp);
       }
    }
 
-   for (i = start_row+num_rows; i < 480/theight; i++) {
-      for (j = 0; j < 640/twidth; j++) {
+   for (i = start_row+num_rows; i < all_rows; i++) {
+      for (j = 0; j < all_cols; j++) {
          fwrite(odata,1,2,ofp);
       }
    }
