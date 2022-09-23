@@ -66,11 +66,11 @@ void main(int argc, char **argv) {
    int orig_height = 64;
 
    if (argc >= 2) {
-      orig_width = atoi(argv[2]);
+      orig_width = atoi(argv[1]);
    }
 
    if (argc >= 3) {
-      orig_height = atoi(argv[3]);
+      orig_height = atoi(argv[2]);
    }
 
    buildmap(orig_width, orig_height,8,8);
