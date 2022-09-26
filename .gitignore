@@ -57,3 +57,5 @@ dkms.conf
 *.PRG
 *.list
 *.zip
+*.png
+*.jpg
